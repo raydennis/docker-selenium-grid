@@ -1,0 +1,55 @@
+version: '3.7'
+
+networks:
+  backend:
+    driver: ${NETWORKS_DRIVER}
+
+services:
+
+  hub:
+    image: docker-make-template/hub
+    build:
+      context: .
+      dockerfile: ./hub/Dockerfile
+      args:
+        - TZ=${TIMEZONE}
+    volumes:
+      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
+    ports:
+      - "${HUB_HOST_PORT}:4444"
+    networks:
+      - backend
+
+  node-chrome:
+    image: docker-make-template/node-chrome
+    build:
+      context: .
+      dockerfile: ./node-chrome/Dockerfile
+      args:
+        - TZ=${TIMEZONE}
+    environment:
+        - HUB_HOST=hub
+        - HUB_PORT=4444
+    volumes:
+      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
+    depends_on:
+      - hub
+    networks:
+      - backend
+
+  node-firefox:
+    image: docker-make-template/node-firefox
+    build:
+      context: .
+      dockerfile: ./node-firefox/Dockerfile
+      args:
+        - TZ=${TIMEZONE}
+    environment:
+        - HUB_HOST=hub
+        - HUB_PORT=4444
+    volumes:
+      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
+    depends_on:
+      - hub
+    networks:
+      - backend
