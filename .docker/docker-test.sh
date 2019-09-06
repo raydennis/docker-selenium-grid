@@ -48,6 +48,8 @@ service="hub"
 service_info ${service}
 test_container_is_running ${service}
 test_host_docker_internal ${service}
+echo "Checking 'status' on '${service}'"
+curl 127.0.0.1:4444/wd/hub/status 
 
 service="node-chrome"
 service_info ${service}
@@ -58,3 +60,5 @@ service="node-firefox"
 service_info ${service}
 test_container_is_running ${service}
 test_host_docker_internal ${service}
+
+
