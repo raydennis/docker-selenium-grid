@@ -2,7 +2,7 @@ echo "get versions"
 make --version
 python --version
 
-sudo apt-get update && sudo apt install -y python3
+sudo apt-get update && sudo apt install -y python3 python3-venv
 
 echo "get folders"
 pwd
@@ -20,9 +20,6 @@ make docker-test
 echo "setup python environment"
 cd system-tests/selenium/examples/python
 
-pwd
-python3 -m venv env
-source env/bin/activate
 pip3 install selenium==3.141.0
 
 echo "run python example test"
