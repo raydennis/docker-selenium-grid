@@ -2,10 +2,8 @@
 
 ## Get started by
 
-1. clone the repo
-```
-git clone UNMIT@vs-ssh.visualstudio.com:v3/UNMIT/docker-selenium-grid/docker-selenium-grid
-```
+1. clone this repo
+
 2. bring up the containers 
 ```
 make docker-build
