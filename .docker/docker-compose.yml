@@ -7,7 +7,7 @@ networks:
 services:
 
   hub:
-    image: docker-make-template/hub
+    image: ${COMPOSE_PROJECT_NAME}/hub
     build:
       context: .
       dockerfile: ./hub/Dockerfile
@@ -21,7 +21,7 @@ services:
       - backend
 
   node-chrome:
-    image: docker-make-template/node-chrome
+    image: ${COMPOSE_PROJECT_NAME}/node-chrome
     build:
       context: .
       dockerfile: ./node-chrome/Dockerfile
@@ -38,7 +38,7 @@ services:
       - backend
 
   node-firefox:
-    image: docker-make-template/node-firefox
+    image: ${COMPOSE_PROJECT_NAME}/node-firefox
     build:
       context: .
       dockerfile: ./node-firefox/Dockerfile
