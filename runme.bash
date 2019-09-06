@@ -2,14 +2,24 @@ echo "get versions"
 make --version
 python --version
 
-echo "build containers"
+sudo apt-get update && apt install -y python3
+
+echo "get folders"
 pwd
+ls -lha
+echo ".docker"
+ls -lha .docker
+echo "/python"
+ls -lha system-tests/selenium/examples/python 
+
+echo "build containers"
 make help
 make docker-build
 make docker-test
 
 echo "setup python environment"
 cd system-tests/selenium/examples/python
+
 pwd
 python3 -m venv env
 source env/bin/activate
