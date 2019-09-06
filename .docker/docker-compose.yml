@@ -2,53 +2,47 @@ version: '3.7'
 
 networks:
   backend:
-    driver: ${NETWORKS_DRIVER}
+    driver: bridge 
 
 services:
 
   hub:
-    image: ${COMPOSE_PROJECT_NAME}/hub
+    image: docker-selenium-grid/hub
     build:
       context: .
       dockerfile: ./hub/Dockerfile
       args:
-        - TZ=${TIMEZONE}
-    volumes:
-      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
+        - TZ=UTC
     ports:
-      - "${HUB_HOST_PORT}:4444"
+      - "4444:4444"
     networks:
       - backend
 
   node-chrome:
-    image: ${COMPOSE_PROJECT_NAME}/node-chrome
+    image: docker-selenium-grid/node-chrome
     build:
       context: .
       dockerfile: ./node-chrome/Dockerfile
       args:
-        - TZ=${TIMEZONE}
+        - TZ=UTC
     environment:
         - HUB_HOST=hub
         - HUB_PORT=4444
-    volumes:
-      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
     depends_on:
       - hub
     networks:
       - backend
 
   node-firefox:
-    image: ${COMPOSE_PROJECT_NAME}/node-firefox
+    image: docker-selenium-grid/node-firefox
     build:
       context: .
       dockerfile: ./node-firefox/Dockerfile
       args:
-        - TZ=${TIMEZONE}
+        - TZ=UTC
     environment:
         - HUB_HOST=hub
         - HUB_PORT=4444
-    volumes:
-      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
     depends_on:
       - hub
     networks:
