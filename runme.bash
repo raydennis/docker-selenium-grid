@@ -2,7 +2,7 @@ echo "get versions"
 make --version
 python --version
 
-sudo apt-get update && apt install -y python3
+sudo apt-get update && sudo apt install -y python3
 
 echo "get folders"
 pwd
