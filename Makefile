@@ -51,6 +51,15 @@ docker-test:  docker-up ## Run the infrastructure tests for the docker setup
 	sh $(DOCKER_COMPOSE_DIR)/docker-test.sh
 
 
+.PHONY: docker-test
+docker-test:  docker-up ## Run the infrastructure tests for the docker setup
+	sh $(DOCKER_COMPOSE_DIR)/docker-test.sh
+
+.PHONY: docker-selenium-test
+docker-selenium-test:  ## Run the system tests python example for the docker setup
+	sh system-tests/selenium/examples/python/runtest.sh 
+
+
 .PHONY: docker-down
 docker-down:  ## Stop and remove all docker containers. To only stop and remove one container, use CONTAINER=<service>
 	$(DOCKER_COMPOSE) down $(CONTAINER)
