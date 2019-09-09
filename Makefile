@@ -1,7 +1,20 @@
 DOCKER_COMPOSE_DIR=./.docker
 DOCKER_COMPOSE_FILE=$(DOCKER_COMPOSE_DIR)/docker-compose.yml
-DEFAULT_CONTAINER=workspace
+DEFAULT_CONTAINER=hub
 DOCKER_COMPOSE=docker-compose -f $(DOCKER_COMPOSE_FILE) --project-directory $(DOCKER_COMPOSE_DIR)
+
+ifeq ($(user),)
+# USER retrieved from env, UID from shell.
+HOST_USER ?= $(strip $(if $(USER),$(USER),nodummy))
+else
+# allow override by adding user= and/ or uid=  (lowercase!).
+# uid= defaults to 0 if user= set (i.e. root).
+HOST_USER = $(user)
+endif
+export HOST_USER
+
+PROJECT_NAME = $(notdir $(PWD))
+export PROJECT_NAME
 
 DEFAULT_GOAL := help
 help:
@@ -11,12 +24,21 @@ help:
 .docker/.env:
 	cp $(DOCKER_COMPOSE_DIR)/.env.example $(DOCKER_COMPOSE_DIR)/.env
 
-.PHONY: docker-clean
-docker-clean: ## Remove the .env file for docker
-	rm -f $(DOCKER_COMPOSE_DIR)/.env
+make-test: ## Test the build itself
+	@echo $(PROJECT_NAME)
+	@echo $(HOST_USER)
 
 .PHONY: docker-init
 docker-init: .docker/.env ## Make sure the .env file exists for docker
+
+.PHONY: docker-up
+docker-up: docker-init ## Start all docker containers. To only start one container, use CONTAINER=<service>
+	$(DOCKER_COMPOSE) up -d $(CONTAINER)
+
+.PHONY: docker-build
+docker-build: docker-init ## Build all docker images. Build a specific image by providing the service name via: make docker-build CONTAINER=<service>
+	$(DOCKER_COMPOSE) build --parallel $(CONTAINER) && \
+	$(DOCKER_COMPOSE) up -d --force-recreate $(CONTAINER)
 
 .PHONY: docker-build-from-scratch
 docker-build-from-scratch: docker-init ## Build all docker images from scratch, without cache etc. Build a specific image by providing the service name via: make docker-build CONTAINER=<service>
@@ -28,19 +50,16 @@ docker-build-from-scratch: docker-init ## Build all docker images from scratch, 
 docker-test: docker-init docker-up ## Run the infrastructure tests for the docker setup
 	sh $(DOCKER_COMPOSE_DIR)/docker-test.sh
 
-.PHONY: docker-build
-docker-build: docker-init ## Build all docker images. Build a specific image by providing the service name via: make docker-build CONTAINER=<service>
-	$(DOCKER_COMPOSE) build --parallel $(CONTAINER) && \
-	$(DOCKER_COMPOSE) up -d --force-recreate $(CONTAINER)
+
+.PHONY: docker-down
+docker-down: docker-init ## Stop and remove all docker containers. To only stop and remove one container, use CONTAINER=<service>
+	$(DOCKER_COMPOSE) down $(CONTAINER)
+
+.PHONY: docker-clean
+docker-clean: ## Remove created containers and images
+	$(DOCKER_COMPOSE) down --remove-orphans --rmi all
+	$(DOCKER_COMPOSE) rm -fs $(CONTAINER)
 
 .PHONY: docker-prune
 docker-prune: ## Remove unused docker resources via 'docker system prune -a -f --volumes'
 	docker system prune -a -f --volumes
-
-.PHONY: docker-up
-docker-up: docker-init ## Start all docker containers. To only start one container, use CONTAINER=<service>
-	$(DOCKER_COMPOSE) up -d $(CONTAINER)
-
-.PHONY: docker-down
-docker-down: docker-init ## Stop all docker containers. To only stop one container, use CONTAINER=<service>
-	$(DOCKER_COMPOSE) down $(CONTAINER)

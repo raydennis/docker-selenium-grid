@@ -7,7 +7,8 @@ networks:
 services:
 
   hub:
-    image: docker-selenium-grid/hub
+    container_name: ${PROJECT_NAME}_hub
+    image: ${PROJECT_NAME}/hub
     build:
       context: .
       dockerfile: ./hub/Dockerfile
@@ -19,7 +20,8 @@ services:
       - backend
 
   node-chrome:
-    image: docker-selenium-grid/node-chrome
+    container_name: ${PROJECT_NAME}_node-chrome
+    image: ${PROJECT_NAME}/node-chrome
     build:
       context: .
       dockerfile: ./node-chrome/Dockerfile
@@ -36,7 +38,8 @@ services:
       - backend
 
   node-firefox:
-    image: docker-selenium-grid/node-firefox
+    container_name: ${PROJECT_NAME}_node-firefox
+    image: ${PROJECT_NAME}/node-firefox
     build:
       context: .
       dockerfile: ./node-firefox/Dockerfile
