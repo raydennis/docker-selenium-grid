@@ -26,8 +26,10 @@ services:
       args:
         - TZ=UTC
     environment:
-        - HUB_HOST=hub
-        - HUB_PORT=4444
+      - HUB_HOST=hub
+      - HUB_PORT=4444
+    volumes:
+      - /dev/shm:/dev/shm # use the hosts shared memory 
     depends_on:
       - hub
     networks:
@@ -43,6 +45,8 @@ services:
     environment:
         - HUB_HOST=hub
         - HUB_PORT=4444
+    volumes:
+      - /dev/shm:/dev/shm # use the hosts shared memory 
     depends_on:
       - hub
     networks:
