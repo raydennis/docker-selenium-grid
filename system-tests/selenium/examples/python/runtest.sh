@@ -22,7 +22,7 @@ make docker-test
 
 echo "setup python environment"
 cd system-tests/selenium/examples/python
-pip install selenium==3.141.0
+pip3 install selenium==3.141.0
 
 echo "run python example test"
-python selenium-google-test.py
+python3 selenium-google-test.py
