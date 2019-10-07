@@ -1,6 +1,5 @@
 DOCKER_COMPOSE_DIR=./.docker
 DOCKER_COMPOSE_FILE=$(DOCKER_COMPOSE_DIR)/docker-compose.yml
-DEFAULT_CONTAINER=hub
 DOCKER_COMPOSE=docker-compose -f $(DOCKER_COMPOSE_FILE) --project-directory $(DOCKER_COMPOSE_DIR)
 
 ifeq ($(user),)
